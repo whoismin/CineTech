@@ -16,7 +16,12 @@ O CineTech consiste em um sistema integrado para cinemas, contemplando funcional
 
 O sistema foi desenvolvido com **TypeScript**, garantindo **tipagem estática, maior confiabilidade do código e melhor manutenção a longo prazo**.
 
-![Captura de tela do CineTech](https://github.com/whoismin/CineTech/blob/28ab32b998b2af74fe90c49761eee88d68f5bcff/Cinema%20Web/src/assets/readme/Filmes.png)
+## Telas
+
+<img width="1325" height="642" alt="Tela principal" src="https://github.com/user-attachments/assets/40886bac-1f24-4e6d-a45b-9f0946b86afc" />
+<img width="1324" height="640" alt="ofertas" src="https://github.com/user-attachments/assets/fb19bcbd-2a81-46c3-8662-4e1a03bc71d6" />
+<img width="1328" height="646" alt="Filmes tela" src="https://github.com/user-attachments/assets/262d06d9-bcf8-4517-9964-4fd0f4093745" />
+<img width="1306" height="648" alt="perfil" src="https://github.com/user-attachments/assets/0007a86f-2c79-4dcb-8d33-e278c63b1334" />
 
 
 ---
