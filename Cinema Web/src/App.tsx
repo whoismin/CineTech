@@ -22,6 +22,7 @@ import { auth, db } from "./firebase";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { Movie, Showtime, Seat, CartItem, User, Booking, Review, SnackItem, Promo } from "./types";
+import { saveBooking } from "./components/database";
 import { toast, Toaster } from "sonner@2.0.3";
 import { movies as moviesData } from "./data/movies";
 import { snacks as snacksData } from "./data/snacks";
@@ -46,6 +47,7 @@ export default function App() {
   const [promosState, setPromosState] = useState<Promo[]>(promosData);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   
+  const [movieDetailsTab, setMovieDetailsTab] = useState("overview");
  
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -140,6 +142,7 @@ export default function App() {
   const handleMovieClick = (movie: Movie) => {
     setSelectedMovie(movie);
     setCurrentView("movie-details");
+    setMovieDetailsTab("overview"); // Reseta para a aba principal ao abrir um novo filme
     window.scrollTo(0, 0);
   };
 
@@ -260,30 +263,59 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  const handleConfirmBooking = () => {
-    if (!user) return;
-    
-    const { total } = calculateTotal();
-    const pointsEarned = Math.floor(total);
-    
-    // Add booking to user
-    user.bookings.unshift({
-      id: `b${Date.now()}`,
-      movieId: selectedMovie!.id, // Salva o ID do filme
-      movieTitle: selectedMovie!.title, // Mantém o título para exibição fácil
-      showtime: `${selectedShowtime!.date} at ${selectedShowtime!.time} - ${selectedShowtime!.screen}`,
-      seats: selectedSeats.map(s => s.id),
-      snacks: snackCart,
-      total,
-      date: new Date().toLocaleDateString(),
-      status: "confirmado",
-      pointsEarned
+  const handleConfirmBooking = async () => {
+    if (!user || !selectedMovie || !selectedShowtime) {
+      toast.error("Erro: Informações da sessão ou do filme estão faltando.");
+      return;
+    }
+
+    const promise = async () => {
+      const { total } = calculateTotal();
+      const bookingDetails = {
+        movieTitle: selectedMovie.title,
+        movieId: selectedMovie.id,
+        showtime: `${selectedShowtime.date} at ${selectedShowtime.time}`,
+        seats: selectedSeats,
+        snacks: snackCart.map(c => ({ id: c.item.id, name: c.item.name, quantity: c.quantity, price: c.item.price, size: c.size })),
+        total: total,
+      };
+
+      // 1. Salva a compra no banco de dados usando a função que criamos.
+      await saveBooking(user.id, bookingDetails);
+
+      // 2. Atualiza o estado local do usuário de forma segura.
+      const pointsEarned = Math.floor(total);
+      setUser(currentUser => {
+        if (!currentUser) return null;
+        const newBooking: Booking = {
+          id: `b${Date.now()}`,
+          movieId: selectedMovie.id,
+          movieTitle: selectedMovie.title,
+          showtime: `${selectedShowtime.date} at ${selectedShowtime.time} - ${selectedShowtime.screen}`,
+          seats: selectedSeats.map(s => s.id),
+          snacks: snackCart,
+          total,
+          date: new Date().toLocaleDateString(),
+          status: "confirmado",
+          pointsEarned,
+        };
+        return {
+          ...currentUser,
+          loyaltyPoints: (currentUser.loyaltyPoints || 0) + pointsEarned,
+          bookings: [newBooking, ...(currentUser.bookings || [])],
+        };
+      });
+    };
+
+    toast.promise(promise(), {
+      loading: "Confirmando sua compra...",
+      success: () => {
+        setCurrentView("confirmation");
+        window.scrollTo(0, 0);
+        return "Compra realizada com sucesso!";
+      },
+      error: "Falha ao confirmar a compra. Tente novamente.",
     });
-    
-    user.loyaltyPoints += pointsEarned;
-    
-    setCurrentView("confirmation");
-    window.scrollTo(0, 0);
   };
 
   const handleBackToHome = () => {
@@ -730,10 +762,7 @@ export default function App() {
                     <span>{selectedMovie.language}</span>
                   </div>
                   <div className="flex gap-3">
-                    <Button size="lg" onClick={() => {
-                      const showtime = showtimes.find(s => s.movieId === selectedMovie.id);
-                      if (showtime) handleShowtimeSelect(showtime);
-                    }}>
+                    <Button size="lg" onClick={() => setMovieDetailsTab("showtimes")}>
                       <Ticket className="w-4 h-4 mr-2" />
                       Reservar Ingressos
                     </Button>
@@ -750,7 +779,7 @@ export default function App() {
             </div>
           </div>
 
-          <Tabs defaultValue="overview" className="mb-12">
+          <Tabs value={movieDetailsTab} onValueChange={setMovieDetailsTab} className="mb-12">
             <TabsList>
               <TabsTrigger value="overview">Visão Geral</TabsTrigger>
               <TabsTrigger value="showtimes">Sessões</TabsTrigger>

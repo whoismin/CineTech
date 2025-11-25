@@ -1,5 +1,6 @@
 import { db } from "../firebase";
-import { collection, addDoc, serverTimestamp, doc, updateDoc, increment } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, setDoc, increment } from "firebase/firestore";
+import { updateProfile } from "firebase/auth";
 import { CartItem, Seat } from "../types";
 
 /**
@@ -21,29 +22,43 @@ export const saveBooking = async (
   console.log("Iniciando saveBooking para o usuário:", userId);
   console.log("Detalhes da compra:", bookingDetails);
 
+  // Adiciona uma verificação para garantir que o userId é válido
+  if (!userId) {
+    console.error("--- ERRO FATAL: userId é nulo ou indefinido. O usuário está logado? ---");
+    throw new Error("Usuário não autenticado. Não é possível salvar a compra.");
+  }
+
   try {
-    // ETAPA 1: Criar o documento da compra na coleção 'purchaseHistory'.
-    // Esta é a forma mais direta de adicionar um novo documento.
-    const purchaseCollectionRef = collection(db, "purchaseHistory");
+    // Calcula os pontos de fidelidade ganhos nesta compra.
+    const pointsToAdd = Math.round(bookingDetails.total);
+
+    // ETAPA 1: Criar o documento da compra na coleção 'compras'.
+    const purchaseCollectionRef = collection(db, "compras");
     await addDoc(purchaseCollectionRef, {
       userId: userId,
       movieTitle: bookingDetails.movieTitle,
       movieId: bookingDetails.movieId,
       showtime: bookingDetails.showtime,
-      seats: bookingDetails.seats.map(s => s.id),
-      snacks: bookingDetails.snacks.map(s => ({ itemId: s.id, quantity: s.quantity, size: s.size })),
+      seats: Array.isArray(bookingDetails.seats) ? bookingDetails.seats.map(s => s.id) : [],
+      snacks: bookingDetails.snacks.map(s => {
+        const snackData: any = { itemId: s.id, quantity: s.quantity };
+        if (s.size) {
+          snackData.size = s.size;
+        }
+        return snackData;
+      }),
       total: bookingDetails.total,
       purchaseDate: serverTimestamp(),
-      status: "confirmed"
+      status: "confirmed",
+      pointsEarned: pointsToAdd // Adiciona os pontos ganhos ao documento da compra
     });
-    console.log("SUCESSO: Documento da compra criado em 'purchaseHistory'.");
+    console.log("SUCESSO: Documento da compra criado em 'compras'.");
 
     // ETAPA 2: Atualizar os pontos de fidelidade do usuário.
     const userRef = doc(db, "users", userId);
-    const pointsToAdd = Math.round(bookingDetails.total);
-    await updateDoc(userRef, {
+    await setDoc(userRef, {
       loyaltyPoints: increment(pointsToAdd)
-    });
+    }, { merge: true });
     console.log(`SUCESSO: ${pointsToAdd} pontos adicionados ao usuário ${userId}.`);
 
   } catch (error) {

@@ -19,9 +19,9 @@ export function UserProfile({ user, onClose }: UserProfileProps) {
     <div className="space-y-6">
       {/* Cabeçalho do Perfil */}
       <Card className="p-6">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-            <UserIcon className="w-10 h-10 text-white" />
+        <div className="flex items-center gap-6 mb-6">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+            <UserIcon className="w-12 h-12 text-white" />
           </div>
           <div className="flex-1">
             <h2 className="mb-1">{user.name}</h2>
@@ -63,7 +63,7 @@ export function UserProfile({ user, onClose }: UserProfileProps) {
       <div className="grid grid-cols-3 gap-4">
         <Card className="p-4 text-center">
           <Ticket className="w-8 h-8 mx-auto mb-2 text-primary" />
-          <p className="text-2xl mb-1">{user.bookings.length}</p>
+          <p className="text-2xl mb-1">{user.bookings?.length || 0}</p>
           <p className="text-sm text-muted-foreground">Total de Reservas</p>
         </Card>
         <Card className="p-4 text-center">
@@ -88,13 +88,13 @@ export function UserProfile({ user, onClose }: UserProfileProps) {
 
           <TabsContent value="upcoming">
             <div className="space-y-4">
-              {user.bookings.filter(b => b.status === "confirmed").length === 0 ? (
+              {!user.bookings || user.bookings.filter(b => b.status === "confirmed").length === 0 ? (
                 <div className="text-center py-8">
                   <Calendar className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
                   <p className="text-muted-foreground">Nenhuma reserva próxima</p>
                 </div>
               ) : (
-                user.bookings
+                (user.bookings || [])
                   .filter(b => b.status === "confirmed")
                   .map(booking => (
                     <BookingCard key={booking.id} booking={booking} />
@@ -105,9 +105,13 @@ export function UserProfile({ user, onClose }: UserProfileProps) {
 
           <TabsContent value="history">
             <div className="space-y-4">
-              {user.bookings.map(booking => (
-                <BookingCard key={booking.id} booking={booking} />
-              ))}
+              {(user.bookings || []).length > 0 ? (
+                (user.bookings || []).map(booking => (
+                  <BookingCard key={booking.id} booking={booking} />
+                ))
+              ) : (
+                <p className="text-center text-muted-foreground py-8">Nenhum histórico de compras encontrado.</p>
+              )}
             </div>
           </TabsContent>
         </Tabs>
