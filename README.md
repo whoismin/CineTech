@@ -1,4 +1,4 @@
-CineTech 🎬
+##CineTech 🎬
 
 CineTech é uma plataforma web completa para cinemas, desenvolvida em TypeScript, oferecendo recursos de seleção de filmes, assentos, lanches e um sistema de programa de fidelidade. O projeto foca em usabilidade, experiência do usuário e código bem estruturado.
 
