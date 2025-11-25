@@ -16,7 +16,6 @@ O CineTech consiste em um sistema integrado para cinemas, contemplando funcional
 
 O sistema foi desenvolvido com **TypeScript**, garantindo **tipagem estática, maior confiabilidade do código e melhor manutenção a longo prazo**.
 
-![CineTech Screenshot](Filmes.png)
 
 
 ---
