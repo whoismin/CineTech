@@ -49,4 +49,43 @@ O sistema foi desenvolvido com **TypeScript**, garantindo **tipagem estática, m
 
 ---
 
+## Estrutura do Projeto
 
+```
+CineTech/
+│
+├── src/
+│   ├── assets/        # Imagens e ícones
+│   ├── components/    # Componentes React
+│   ├── pages/         # Páginas do sistema
+│   ├── types/         # Tipos TypeScript
+│   └── App.tsx
+│
+├── public/
+├── package.json
+└── README.md
+```
+
+---
+
+## Instruções para Execução
+
+1. Clonar o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/CineTech.git
+```
+
+2. Instalar as dependências:
+
+```bash
+npm install
+```
+
+3. Executar a aplicação:
+
+```bash
+npm start
+```
+
+---
