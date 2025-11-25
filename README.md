@@ -1,29 +1,44 @@
-##CineTech 🎬
+# CineTech 🎬
 
-CineTech é uma plataforma web completa para cinemas, desenvolvida em TypeScript, oferecendo recursos de seleção de filmes, assentos, lanches e um sistema de programa de fidelidade. O projeto foca em usabilidade, experiência do usuário e código bem estruturado.
+**CineTech** é uma plataforma web de gestão de cinemas, desenvolvida em **TypeScript**, que oferece recursos completos de seleção de filmes, assentos, lanches e um **programa de fidelidade**, com pontuação concedida tanto no cadastro quanto a cada compra realizada. O projeto tem como objetivo proporcionar **uma experiência de usuário eficiente e segura**, aliada a um código bem estruturado e de fácil manutenção.
 
-📝 Descrição do Projeto
+---
 
-CineTech simula um sistema de cinema completo, permitindo que o usuário:
+## Descrição do Projeto
 
-Visualize filmes em cartaz e em breve.
+O CineTech consiste em um sistema integrado para cinemas, contemplando funcionalidades que permitem:
 
-Escolha assentos de forma intuitiva.
+* Visualizar filmes em cartaz e em breve lançamento;
+* Selecionar assentos de maneira intuitiva;
+* Realizar a compra de ingressos e lanches;
+* Participar de um **programa de fidelidade**, acumulando pontos no cadastro e a cada transação;
+* Avaliar filmes e acompanhar promoções disponíveis.
 
-Compre ingressos e lanches.
+O sistema foi desenvolvido com **TypeScript**, garantindo **tipagem estática, maior confiabilidade do código e melhor manutenção a longo prazo**.
 
-Participe do programa de fidelidade, recebendo pontos ao se cadastrar e a cada compra.
+---
 
-Avalie filmes e acompanhe promoções.
+## Tecnologias Utilizadas
 
-O sistema foi desenvolvido com TypeScript, garantindo tipagem segura, menor chance de erros e melhor manutenção do código.
+* **Front-end:** React + TypeScript, TailwindCSS, Radix UI
+* **Back-end / Banco de Dados:** Firebase (Autenticação e Firestore)
+* **Gerenciamento de Estado:** React Context / Hooks
+* **Ferramentas de Desenvolvimento:** Visual Studio Code, Node.js
 
-⚙️ Tecnologias Utilizadas
+---
 
-Front-end: React + TypeScript, TailwindCSS, Radix UI
+## Funcionalidades
 
-Back-end / Banco de Dados: Firebase (Auth e Firestore)
+* Visualização de filmes em cartaz e em breve;
+* Seleção de assentos com interface visual;
+* Compra de ingressos e registro de pedidos;
+* Catálogo de lanches com promoções;
+* **Programa de fidelidade:**
 
-Gerenciamento de Estado: React Context / Hooks
+  * Pontos concedidos no cadastro;
+  * Pontos acumulados a cada compra realizada;
+* Avaliações e comentários sobre os filmes.
 
-Ferramentas: Visual Studio Code, Node.js
+---
+
+
